@@ -1,9 +1,12 @@
 *.sln
 *.filters
 *.user
-*.vcx
+*.vcx*
 *.vsix
+*.vsix*
 **/x64
+**/.vs
+
 
 # Prerequisites
 *.d
