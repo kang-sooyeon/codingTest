@@ -1,7 +1,8 @@
 .sln
 .filters
 .user
-.vcx*
+.vcx
+.vsix
 
 # Prerequisites
 *.d
