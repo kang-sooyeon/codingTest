@@ -4,22 +4,23 @@
 
 using namespace std;
 
-struct Pos {
+struct CCTV {
 	int y;
 	int x;
+	int type;
 };
 
 int N, M;
 int map[8][8];
+CCTV cctv[8];
 int cctv_size = 0;
-Pos cctv[8];
 
-int ret = 0x7fffffff;
+int ret;
 int rot_size[] = {4, 2, 4, 4, 1};
-int dy[4] = { -1, 0, 1, 0 };
-int dx[4] = { 0, 1, 0, -1 };
+int dy[4] = { 0, -1, 0, 1 };
+int dx[4] = { 1, 0, -1, 0 };
 
-void map_copy(int dst[][8], int src[][8])
+void map_copy(int dst[8][8], int src[8][8])
 {
 	for (int i = 0; i < N; i++) {
 		for (int j = 0; j < M; j++) {
@@ -28,56 +29,14 @@ void map_copy(int dst[][8], int src[][8])
 	}
 }
 
-void print_map()
+void update(int dir, CCTV cctv)
 {
-	for (int i = 0; i < N; i++) {
-		for (int j = 0; j < M; j++) {
-			cout << map[i][j];
-		}
-		cout << endl;
-	}
-	cout << endl;
-}
-
-void update(int d, Pos p)
-{
-	d = d % 4;
-	
-	if (d == 1) {
-		for (int x = p.x + 1; x < M; ++x) {
-			if (map[p.y][x] == 6) break;
-			map[p.y][x] = -1;
-		}
-	}
-	if (d == 3) {
-		for (int y = p.y - 1; y >= 0; --y) {
-			if (map[y][p.x] == 6) break;
-			map[y][p.y] = -1;
-		}
-	}
-	if (d == 2) {
-		for (int x = p.x - 1; x >= 0; --x) {
-			if (map[p.y][x] == 6) break;
-			map[p.y][x] = -1;
-		}
-	}
-	if (d == 2) {
-		for (int y = p.y + 1; y < N; ++y) {
-			if (map[y][p.x] == 6) break;
-			map[y][p.x] = -1;
-		}
-	}
-}
-
-/*
-void update(int d, Pos p)
-{
-	d = d % 4;
-	int y = p.y;
-	int x = p.x;
+	dir = dir % 4;
+	int y = cctv.y;
+	int x = cctv.x;
 	while (1) {
-		y += dy[d];
-		x += dx[d];
+		y += dy[dir];
+		x += dx[dir];
 
 		if (y < 0 || y >= N || x < 0 || x >= M)
 			break;
@@ -85,16 +44,14 @@ void update(int d, Pos p)
 		if (map[y][x] == 6)
 			break;
 
-		map[y][x] = 9;
+		map[y][x] = -1;
 	}
 }
-*/
 
-void dfs(int index) 
+
+void dfs(int cctv_index) 
 {
-	if (index == cctv_size) {
-		
-		//print_map();
+	if (cctv_index == cctv_size) {
 
 		// 빈공간 세기
 		int zero_count = 0;
@@ -114,42 +71,38 @@ void dfs(int index)
 	int backup[8][8];	//**전역변수말고 지역변수로 해야 백트래킹 가능
 
 	//  방향 돌려가면서 맵 업데이트
-	Pos cctv_pos = cctv[index];
-	int cctv_type = map[cctv_pos.y][cctv_pos.x]-1;
-	int rot_size_ = rot_size[cctv_type];
-
-	//cout << "index : " << index << endl;
-	//cout << "cctv_type : " << cctv_type << endl;
-	//cout << "rot_size_ : " << rot_size_ << endl;
-
-	for (int d = 0; d < rot_size_; d++) {
-		// map update
+	int cctv_type = cctv[cctv_index].type;
+	//int cctv_type = map[cctv[cctv_index].y][cctv[cctv_index].x] - 1;	 // *** 이때 타입 맵에서 얻으면, 다른 cctv에 의해서 값이 변경됐을수있음. 위처럼 초기에 받아서 저장해야함.
+	for (int dir = 0; dir < rot_size[cctv_type]; dir++) {
+		// map backup
 		map_copy(backup, map);
+
+		// map update
 		if (cctv_type == 0) {
-			update(d+1, cctv[index]);
+			update(dir, cctv[cctv_index]);
 		}
-		else if (cctv_type == 1) {
-			update(d+1, cctv[index]);
-			update(d+3, cctv[index]);
+		if (cctv_type == 1) {
+			update(dir, cctv[cctv_index]);
+			update(dir + 2, cctv[cctv_index]);
 		}
-		else if (cctv_type == 2) {
-			update(d, cctv[index]);
-			update(d+1, cctv[index]);
+		if (cctv_type == 2) {
+			update(dir, cctv[cctv_index]);
+			update(dir+1, cctv[cctv_index]);
 		}
-		else if (cctv_type == 3) {
-			update(d, cctv[index]);
-			update(d + 1, cctv[index]);
-			update(d + 3, cctv[index]);
+		if (cctv_type == 3) {
+			update(dir, cctv[cctv_index]);
+			update(dir + 1, cctv[cctv_index]);
+			update(dir + 2, cctv[cctv_index]);
 		}
-		else if (cctv_type == 4) {
-			update(d, cctv[index]);
-			update(d + 1, cctv[index]);
-			update(d + 2, cctv[index]);
-			update(d + 3, cctv[index]);
+		if (cctv_type == 4) {
+			update(dir, cctv[cctv_index]);
+			update(dir + 1, cctv[cctv_index]);
+			update(dir + 2, cctv[cctv_index]);
+			update(dir + 3, cctv[cctv_index]);
 		}
 		
 		// 다음 cctv
-		dfs(index + 1);
+		dfs(cctv_index + 1);
 
 		// map recover
 		map_copy(map, backup);
@@ -169,14 +122,18 @@ int main() {
 			cin >> map[i][j];
 
 			if (map[i][j] >= 1 && map[i][j] <= 5) {
-				cctv[cctv_size++] = { i, j };
+				cctv[cctv_size].y = i;
+				cctv[cctv_size].x = j;
+				cctv[cctv_size].type = map[i][j] - 1;	//**
+				cctv_size++;
 			}
 		}
 	}
 
+	ret = 100;
 	dfs(0);
-
 	cout << ret;
+
 	return 0;
 }
 
