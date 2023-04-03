@@ -1,8 +1,9 @@
 .sln
-.filters
-.user
-.vcx
-.vsix
+*.filters
+*.user
+*.vcx
+*.vsix
+**/x64
 
 # Prerequisites
 *.d
