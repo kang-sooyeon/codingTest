@@ -124,7 +124,7 @@ int main() {
 			if (map[i][j] >= 1 && map[i][j] <= 5) {
 				cctv[cctv_size].y = i;
 				cctv[cctv_size].x = j;
-				cctv[cctv_size].type = map[i][j] - 1;	//**
+				cctv[cctv_size].type = map[i][j] - 1;	//** 미리 type 세팅
 				cctv_size++;
 			}
 		}
