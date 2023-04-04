@@ -6,7 +6,7 @@
 *.vsix*
 **/x64
 **/.vs
-input
+input.txt
 
 
 # Prerequisites
@@ -41,3 +41,4 @@ input
 *.exe
 *.out
 *.app
+input.txt
