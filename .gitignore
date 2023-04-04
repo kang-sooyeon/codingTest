@@ -6,6 +6,7 @@
 *.vsix*
 **/x64
 **/.vs
+input
 
 
 # Prerequisites
