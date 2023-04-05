@@ -59,7 +59,7 @@ void bfs() {
 			// 우선순위 좌표 갱신
 			if (next_shark.y > cur.y || (next_shark.y == cur.y && next_shark.x > cur.x)) {
 				next_shark = cur;
-				printf("next shark.y : %d, next_shark.x : %d, next_shark.time: %d\n", next_shark.y, next_shark.x, next_shark.time);
+				//printf("next shark.y : %d, next_shark.x : %d, next_shark.time: %d\n", next_shark.y, next_shark.x, next_shark.time);
 			}
 		}
 
