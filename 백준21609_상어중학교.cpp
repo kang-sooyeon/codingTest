@@ -9,22 +9,23 @@ int board[20][20];
 
 const int dy[] = { -1, 0, +1, 0 };
 const int dx[] = { 0, -1, 0, +1 };
- 
+
 int calcPoint()
 {
 	int point = 0;
 	vector<int> maxArea;	// 지워야하는 가장 큰 블록그룹의 좌표들
 	int maxRainbow = 0;
 
+	// 모든 color 돌면서 가장 큰 블록을 찾아야함. 레인보우 개수도 체크
 	for (int color = 1; color <= M; color++) {
-		bool visited[20][20] = { 0, };	
+		bool visited[20][20] = { 0, };
 		// visted 원래는 1번 블록하고, 2번블록하고 겹칠일 없어서 밖에다 둬도 되는데
 		// visted 무지개블록은 1번, 2번 모두 밟을수 있기 때문에 반드시 안에다 놔야함. 
-		
+
 		for (int y = 0; y < N; y++) {
 			for (int x = 0; x < N; x++) {
-				
-				if( !visited[y][x] && board[y][x] == color) {
+
+				if (!visited[y][x] && board[y][x] == color) {
 					// 방문할 곳
 
 					queue<int> q;
@@ -48,7 +49,7 @@ int calcPoint()
 
 							if (!visited[ny][nx] && (board[ny][nx] == color || board[ny][nx] == 0)) {
 								q.push(ny * 100 + nx);
-								vec.push_back(ny * 100 + nx);
+								vec.push_back(ny * 100 + nx);	// 블록을 이루는 좌표들 모두 저장
 								visited[ny][nx] = true;
 								if (board[ny][nx] == 0) {
 									++rainbow;
@@ -57,8 +58,9 @@ int calcPoint()
 						}
 					}
 
-					if (maxArea.size() < vec.size() || (maxArea.size() == vec.size() && maxRainbow < rainbow) 
-						|| (maxArea.size() == vec.size() && maxRainbow == rainbow && maxArea[0] < vec[0] )) {
+					// 1) 찾은 블록이 최대 블록보다 크거나 2) 같은 경우는 레인보우 개수 비교 3) 그것도 같으면, 기준블록 작은순으로 
+					if (maxArea.size() < vec.size() || (maxArea.size() == vec.size() && maxRainbow < rainbow)
+						|| (maxArea.size() == vec.size() && maxRainbow == rainbow && maxArea[0] < vec[0])) {
 						maxArea = vec;
 						maxRainbow = rainbow;
 					}
